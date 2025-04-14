@@ -13,9 +13,24 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app requires access to the camera.",
+        "NSMicrophoneUsageDescription": "This app requires access to the microphone.",
+        "NSLocationWhenInUseUsageDescription": "This app uses your location to provide better services.",
+        "NSPhotoLibraryUsageDescription": "This app needs access to your photo library.",
+        "NSContactsUsageDescription": "This app uses your contacts for calling purposes."
+      }
     },
     "android": {
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "ACCESS_FINE_LOCATION",
+        "CALL_PHONE"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
