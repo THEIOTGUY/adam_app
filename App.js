@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, StyleSheet, StatusBar, Platform } from 'react-native';
 import { WebView } from 'react-native-webview';
-import * as Permissions from 'expo-permissions';
-import * as Location from 'expo-location';
+import { check, request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 
 export default function App() {
   useEffect(() => {
@@ -12,24 +11,27 @@ export default function App() {
 
   const requestPermissions = async () => {
     try {
-      const { status: cameraStatus } = await Permissions.askAsync(Permissions.CAMERA);
-      const { status: micStatus } = await Permissions.askAsync(Permissions.AUDIO_RECORDING);
-      const { status: mediaStatus } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
-      const { status: locationStatus } = await Location.requestForegroundPermissionsAsync();
-
-      if (Platform.OS === 'android') {
-        const { status: phoneStatus } = await Permissions.askAsync(Permissions.SYSTEM_BRIGHTNESS); // Expo does not support CALL_PHONE directly
-        // CALL_PHONE isn't requestable via expo-permissions. You'd need a custom native module or use Intent.
-      }
-
-      console.log('Permissions granted:', {
-        cameraStatus,
-        micStatus,
-        mediaStatus,
-        locationStatus,
+      const permissionsToRequest = Platform.select({
+        ios: [
+          PERMISSIONS.IOS.CAMERA,
+          PERMISSIONS.IOS.MICROPHONE,
+          PERMISSIONS.IOS.MEDIA_LIBRARY,
+          PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
+        ],
+        android: [
+          PERMISSIONS.ANDROID.CAMERA,
+          PERMISSIONS.ANDROID.RECORD_AUDIO,
+          PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+          PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+        ],
       });
-    } catch (err) {
-      console.warn('Permission error:', err);
+
+      for (const permission of permissionsToRequest) {
+        const result = await request(permission);
+        console.log(`${permission}: ${result}`);
+      }
+    } catch (error) {
+      console.warn('Permission request error:', error);
     }
   };
 
